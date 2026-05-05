@@ -3,6 +3,11 @@ const express = require("express");
 const mysqlConnection = require("./connections/mysql.connection");
 const mongodbConnection = require("./connections/mongodb.connection");
 const exampleRoutes = require("./routes/example.routes");
+const userRoutes = require("./routes/user.routes");
+const ticketRoutes = require("./routes/ticket.routes");
+const eventRoutes = require("./routes/event.routes");
+const bookingRoutes = require("./routes/booking.routes");
+const stadiumRoutes = require("./routes/stadium.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +16,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", exampleRoutes);
+app.use("/api", userRoutes);
+app.use("/api", ticketRoutes);
+app.use("/api", eventRoutes);
+app.use("/api", bookingRoutes);
+app.use("/api", stadiumRoutes);
 
 const initializeDatabases = async () => {
   console.log("Initializing databases...");
