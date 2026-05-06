@@ -33,6 +33,8 @@ const ticketMySQLController = {
 
   async createTicket(req, res) {
     try {
+      console.log('MySQL req.body:', req.body);
+      console.log('MySQL raw body:', JSON.stringify(req.body));
       const ticket = await ticketMySQLService.createTicket(req.body);
       res.status(201).json({ success: true, data: ticket });
     } catch (error) {

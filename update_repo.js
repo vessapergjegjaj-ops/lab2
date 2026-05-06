@@ -1,4 +1,6 @@
-﻿const mongoose = require('mongoose');
+const fs = require('fs');
+
+const repoContent = \const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
@@ -34,15 +36,15 @@ const bookingMongoDBRepository = {
       .populate('ticketId', 'eventName seatNumber price');
   },
 
-  async findByTicketId(ticketId) {
-    return await Booking.findOne({ ticketId, status: { '$in': ['pending', 'confirmed'] } });
-  },
-  
   async findByUserId(userId) {
     return await Booking.find({ userId })
       .populate('userId', 'name email')
       .populate('ticketId', 'eventName seatNumber price')
       .sort({ bookingDate: -1 });
+  },
+
+  async findByTicketId(ticketId) {
+    return await Booking.findOne({ ticketId, status: { '$in': ['pending', 'confirmed'] } });
   },
 
   async update(id, data) {
@@ -55,3 +57,7 @@ const bookingMongoDBRepository = {
 };
 
 module.exports = bookingMongoDBRepository;
+\;
+
+fs.writeFileSync('C:\\Users\\Admin\\OneDrive\\Desktop\\lab2\\src\\repositories\\bookings\\bookingMongoDB.repository.js', repoContent);
+console.log('Repository file written');

@@ -12,8 +12,18 @@ const stadiumRoutes = require("./routes/stadium.routes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  console.log("[REQUEST] " + req.method + " " + req.url + " Content-Type: " + req.headers["content-type"]);
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  console.log("[AFTER PARSE] " + req.method + " " + req.url + " Body: " + JSON.stringify(req.body));
+  next();
+});
 
 app.use("/", exampleRoutes);
 app.use("/api", userRoutes);
@@ -42,8 +52,8 @@ const startServer = async () => {
   await initializeDatabases();
 
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log("Server running on port " + PORT);
+    console.log("Environment: " + (process.env.NODE_ENV || "development"));
   });
 };
 

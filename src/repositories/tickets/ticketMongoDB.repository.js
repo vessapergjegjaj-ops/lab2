@@ -5,7 +5,7 @@ const TicketSchema = new mongoose.Schema({
   seatNumber: { type: String, required: true },
   price: { type: Number, required: true },
   status: { type: String, enum: ['available', 'booked', 'cancelled'], default: 'available' },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  userId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
 });
 

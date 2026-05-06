@@ -33,6 +33,8 @@ const ticketMongoDBController = {
 
   async createTicket(req, res) {
     try {
+      console.log('req.body:', req.body);
+      console.log('raw body:', JSON.stringify(req.body));
       const ticket = await ticketMongoDBService.createTicket(req.body);
       res.status(201).json({ success: true, data: ticket });
     } catch (error) {
