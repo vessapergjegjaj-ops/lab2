@@ -6,6 +6,10 @@ const mysqlConnection = {
     return results;
   },
 
+  getConnection: async () => {
+    return await pool.promise().getConnection();
+  },
+
   testConnection: async () => {
     try {
       await pool.promise().query("SELECT 1");

@@ -14,15 +14,23 @@ const ticketMySQLService = {
   },
 
   async createTicket(ticket) {
-    if (!ticket.eventName || !ticket.seatNumber || !ticket.price) {
-      throw new Error('Event name, seat number, and price are required');
+    const missing = [];
+    if (!ticket.eventName) missing.push('eventName');
+    if (!ticket.seatNumber) missing.push('seatNumber');
+    if (!ticket.price) missing.push('price');
+    if (missing.length > 0) {
+      throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     return await ticketMySQLRepository.create(ticket);
   },
 
   async updateTicket(id, ticket) {
-    if (!ticket.eventName || !ticket.seatNumber || !ticket.price) {
-      throw new Error('Event name, seat number, and price are required');
+    const missing = [];
+    if (!ticket.eventName) missing.push('eventName');
+    if (!ticket.seatNumber) missing.push('seatNumber');
+    if (!ticket.price) missing.push('price');
+    if (missing.length > 0) {
+      throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     return await ticketMySQLRepository.update(id, ticket);
   },
