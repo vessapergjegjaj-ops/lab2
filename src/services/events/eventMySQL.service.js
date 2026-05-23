@@ -1,3 +1,4 @@
+const validateEvent = require('../../utils/validateEvent');
 const eventMySQLRepository = require('../../repositories/events/eventMySQL.repository');
 
 const eventMySQLService = {
@@ -14,18 +15,17 @@ const eventMySQLService = {
   },
 
   async createEvent(event) {
-    if (!event.name || !event.eventDate) {
-      throw new Error('Name and event date are required');
-    }
+    validateEvent(event);
+
     return await eventMySQLRepository.create(event);
   },
 
   async updateEvent(id, event) {
-    if (!event.name || !event.eventDate) {
-      throw new Error('Name and event date are required');
-    }
-    return await eventMySQLRepository.update(id, event);
-  },
+  if (!event.name || !event.eventDate) { // This is duplicate code!
+    throw new Error('Name and event date are required');
+  }
+  return await eventMySQLRepository.update(id, event);
+ },
 
   async deleteEvent(id) {
     return await eventMySQLRepository.delete(id);
