@@ -8,6 +8,15 @@ const ticketRoutes = require("./routes/ticket.routes");
 const eventRoutes = require("./routes/event.routes");
 const bookingRoutes = require("./routes/booking.routes");
 const stadiumRoutes = require("./routes/stadium.routes");
+const authRoutes = require("./routes/auth.routes");
+const roleRoutes = require("./routes/role.routes");
+const matchRoutes = require("./routes/match.routes");
+const bookingExtensionRoutes = require("./routes/bookingExtension.routes");
+const notificationRoutes = require("./routes/notification.routes");
+const userFoundationRoutes = require("./routes/userFoundation.routes");
+const stadiumFoundationRoutes = require("./routes/stadiumFoundation.routes");
+const bookingFoundationRoutes = require("./routes/bookingFoundation.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +40,15 @@ app.use("/api", ticketRoutes);
 app.use("/api", eventRoutes);
 app.use("/api", bookingRoutes);
 app.use("/api", stadiumRoutes);
+app.use("/api", authRoutes);
+app.use("/api", roleRoutes);
+app.use("/api", matchRoutes);
+app.use("/api", bookingExtensionRoutes);
+app.use("/api", notificationRoutes);
+app.use("/api", userFoundationRoutes);
+app.use("/api", stadiumFoundationRoutes);
+app.use("/api", bookingFoundationRoutes);
+app.use("/api", dashboardRoutes);
 
 const initializeDatabases = async () => {
   console.log("Initializing databases...");

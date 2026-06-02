@@ -1,3 +1,4 @@
+const validateEvent = require('../../utils/validateEvent');
 const eventMongoDBRepository = require('../../repositories/events/eventMongoDB.repository');
 
 const eventMongoDBService = {
@@ -14,16 +15,14 @@ const eventMongoDBService = {
   },
 
   async createEvent(event) {
-    if (!event.name || !event.eventDate) {
-      throw new Error('Name and event date are required');
-    }
+    validateEvent(event);
+
     return await eventMongoDBRepository.create(event);
   },
 
   async updateEvent(id, event) {
-    if (!event.name || !event.eventDate) {
-      throw new Error('Name and event date are required');
-    }
+    validateEvent(event);
+
     return await eventMongoDBRepository.update(id, event);
   },
 
