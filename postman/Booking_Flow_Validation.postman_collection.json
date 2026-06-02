@@ -1,0 +1,632 @@
+{
+	"info": {
+		"_postman_id": "booking-flow-validation",
+		"name": "Booking_Flow_Validation",
+		"description": "Collection to validate the complete booking flow for both MongoDB and MySQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		}
+	],
+	"item": [
+		{
+			"name": "MongoDB Booking Flow",
+			"item": [
+				{
+					"name": "1. POST Create User (MongoDB) - Create a test user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.collectionVariables.set('userId', jsonData.id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Test User\", \"email\": \"testuser@example.com\"}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "users"]
+						}
+					}
+				},
+				{
+					"name": "2. POST Create Ticket (MongoDB) - Create a test ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Ticket created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.collectionVariables.set('ticketId', jsonData.id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"eventName\": \"Concert 2026\", \"seatNumber\": \"A1\", \"price\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/tickets",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "tickets"]
+						}
+					}
+				},
+				{
+					"name": "3. POST Create Booking - Success (MongoDB) - Book the ticket successfully",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{userId}}\", \"ticketId\": \"{{ticketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "4. POST Create Booking - Duplicate Prevention (MongoDB) - Try to book same ticket again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Duplicate booking prevented', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('already been booked').or.include('not available');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{userId}}\", \"ticketId\": \"{{ticketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "5. POST Create Booking - Non-existent User (MongoDB) - Try to book with invalid user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking with non-existent user fails', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('user not found');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": 99999, \"ticketId\": \"{{ticketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "6. POST Create Booking - Non-existent Ticket (MongoDB) - Try to book invalid ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking with non-existent ticket fails', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('ticket not found');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{userId}}\", \"ticketId\": \"507f1f77bcf86cd799439011\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "7. GET Get Ticket - Verify Status Updated (MongoDB)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Ticket status is booked', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('booked');",
+									"    pm.expect(jsonData.userId).to.eql(pm.collectionVariables.get('userId'));",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/tickets/{{ticketId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "tickets", "{{ticketId}}"]
+						}
+					}
+				},
+				{
+					"name": "8. GET Get All Bookings (MongoDB)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all bookings successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "9. GET Get Bookings by User ID (MongoDB)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get bookings by user ID successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mongodb/bookings/user/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mongodb", "bookings", "user", "{{userId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "MySQL Booking Flow",
+			"item": [
+				{
+					"name": "1. POST Create User (MySQL) - Create a test user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.collectionVariables.set('mysqlUserId', jsonData.id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Test User\", \"email\": \"testuser@example.com\"}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "users"]
+						}
+					}
+				},
+				{
+					"name": "2. POST Create Ticket (MySQL) - Create a test ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Ticket created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.collectionVariables.set('mysqlTicketId', jsonData.id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"eventName\": \"Concert 2026\", \"seatNumber\": \"A1\", \"price\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/tickets",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "tickets"]
+						}
+					}
+				},
+				{
+					"name": "3. POST Create Booking - Success (MySQL) - Book the ticket successfully",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking created successfully', function() {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{mysqlUserId}}\", \"ticketId\": \"{{mysqlTicketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "4. POST Create Booking - Duplicate Prevention (MySQL) - Try to book same ticket again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Duplicate booking prevented', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('already been booked').or.include('not available');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{mysqlUserId}}\", \"ticketId\": \"{{mysqlTicketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "5. POST Create Booking - Non-existent User (MySQL) - Try to book with invalid user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking with non-existent user fails', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('user not found');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": 99999, \"ticketId\": \"{{mysqlTicketId}}\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "6. POST Create Booking - Non-existent Ticket (MySQL) - Try to book invalid ticket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Booking with non-existent ticket fails', function() {",
+									"    pm.response.to.have.status(400);",
+									"    var jsonData = pm.response.json();",
+									"    var error = JSON.stringify(jsonData).toLowerCase();",
+									"    pm.expect(error).to.include('ticket not found');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userId\": \"{{mysqlUserId}}\", \"ticketId\": \"507f1f77bcf86cd799439011\", \"totalPrice\": 150}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "7. GET Get Ticket - Verify Status Updated (MySQL)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Ticket status is booked', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('booked');",
+									"    pm.expect(jsonData.userId).to.eql(pm.collectionVariables.get('mysqlUserId'));",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/tickets/{{mysqlTicketId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "tickets", "{{mysqlTicketId}}"]
+						}
+					}
+				},
+				{
+					"name": "8. GET Get All Bookings (MySQL)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all bookings successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "9. GET Get Bookings by User ID (MySQL)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get bookings by user ID successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/mysql/bookings/user/{{mysqlUserId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "mysql", "bookings", "user", "{{mysqlUserId}}"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
