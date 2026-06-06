@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import Notifications from './pages/Notifications'
 import ToastContainer from './components/ToastContainer'
+import AdvancedSearch from './pages/AdvancedSearch'
 
 export default function App() {
   return (
@@ -57,6 +58,10 @@ export default function App() {
             path="/notifications"
             element={<ProtectedRoute><Notifications /></ProtectedRoute>}
           />
+          <Route
+           path="/advanced-search" 
+           element={<AdvancedSearch />} 
+           />
         </Routes>
       </main>
     </div>
