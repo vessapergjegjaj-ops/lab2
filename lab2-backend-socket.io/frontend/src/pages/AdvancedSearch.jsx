@@ -23,9 +23,9 @@ function AdvancedSearch() {
       { id: 3, name: "Seat C7", section: "Regular", status: "sold", price: 30 },
     ],
     payments: [
-      { id: 1, name: "Payment 001", method: "card", status: "success", amount: 50 },
-      { id: 2, name: "Payment 002", method: "cash", status: "pending", amount: 25 },
-      { id: 3, name: "Payment 003", method: "paypal", status: "failed", amount: 30 },
+      { id: 1, name: "Payment 001", method: "Card", status: "success", amount: 50 },
+      { id: 2, name: "Payment 002", method: "Cash", status: "pending", amount: 25 },
+      { id: 3, name: "Payment 003", method: "PayPal", status: "failed", amount: 30 },
     ],
     users: [
       { id: 1, name: "Admin User", role: "admin", status: "active", email: "admin@test.com" },
@@ -48,7 +48,7 @@ function AdvancedSearch() {
       );
     }
 
-    if (filterValue !== "") {
+    if (filterValue.trim() !== "") {
       result = result.filter((item) =>
         Object.values(item)
           .join(" ")
@@ -76,77 +76,198 @@ function AdvancedSearch() {
     return result;
   }, [searchText, filterValue, sortBy, currentData]);
 
+  const resetSearch = () => {
+    setSearchText("");
+    setFilterValue("");
+    setSortBy("");
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Advanced Search</h1>
-
-      <p>
-        Search with filters, sorting and full-text search for 5 different lists.
-      </p>
-
-      <div style={{ marginBottom: "15px" }}>
-        <button onClick={() => setActiveList("matches")}>Matches</button>{" "}
-        <button onClick={() => setActiveList("bookings")}>Bookings</button>{" "}
-        <button onClick={() => setActiveList("seats")}>Seats</button>{" "}
-        <button onClick={() => setActiveList("payments")}>Payments</button>{" "}
-        <button onClick={() => setActiveList("users")}>Users</button>
-      </div>
-
-      <input
-        type="text"
-        placeholder="Full-text search..."
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ padding: "10px", width: "250px", marginRight: "10px" }}
-      />
-
-      <input
-        type="text"
-        placeholder="Filter by status, role, stadium..."
-        value={filterValue}
-        onChange={(e) => setFilterValue(e.target.value)}
-        style={{ padding: "10px", width: "250px", marginRight: "10px" }}
-      />
-
-      <select
-        value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
-        style={{ padding: "10px" }}
+    <div
+      style={{
+        minHeight: "100vh",
+        padding: "30px",
+        background: "linear-gradient(135deg, #0f172a, #1e293b)",
+        color: "white",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto",
+          background: "rgba(255,255,255,0.08)",
+          borderRadius: "20px",
+          padding: "25px",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+        }}
       >
-        <option value="">Sort By</option>
-        <option value="name">Name</option>
-        <option value="status">Status</option>
-        <option value="date">Date</option>
-        <option value="price">Price / Amount</option>
-      </select>
+        <h1 style={{ marginBottom: "5px" }}>Advanced Search</h1>
 
-      <h3 style={{ marginTop: "20px" }}>
-        Results from {activeList}: {filteredData.length}
-      </h3>
+        <p style={{ color: "#cbd5e1", marginBottom: "25px" }}>
+          Full-text search, filters and sorting for 5 different lists.
+        </p>
 
-      {filteredData.length === 0 ? (
-        <p>No results found.</p>
-      ) : (
-        <table border="1" cellPadding="10" style={{ width: "100%", marginTop: "15px" }}>
-          <thead>
-            <tr>
-              {Object.keys(filteredData[0]).map((key) => (
-                <th key={key}>{key.toUpperCase()}</th>
-              ))}
-            </tr>
-          </thead>
+        <div style={{ marginBottom: "20px" }}>
+          {["matches", "bookings", "seats", "payments", "users"].map((list) => (
+            <button
+              key={list}
+              onClick={() => setActiveList(list)}
+              style={{
+                padding: "10px 15px",
+                marginRight: "8px",
+                marginBottom: "8px",
+                borderRadius: "10px",
+                border: "none",
+                cursor: "pointer",
+                background: activeList === list ? "#06b6d4" : "#334155",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              {list.toUpperCase()}
+            </button>
+          ))}
+        </div>
 
-          <tbody>
-            {filteredData.map((item) => (
-              <tr key={item.id}>
-                {Object.values(item).map((value, index) => (
-                  <td key={index}>{value}</td>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Full-text search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "10px",
+              border: "1px solid #475569",
+              background: "#020617",
+              color: "white",
+              minWidth: "230px",
+            }}
+          />
+
+          <input
+            type="text"
+            placeholder="Filter by status, role, stadium..."
+            value={filterValue}
+            onChange={(e) => setFilterValue(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "10px",
+              border: "1px solid #475569",
+              background: "#020617",
+              color: "white",
+              minWidth: "260px",
+            }}
+          />
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "10px",
+              border: "1px solid #475569",
+              background: "#020617",
+              color: "white",
+            }}
+          >
+            <option value="">Sort By</option>
+            <option value="name">Name</option>
+            <option value="status">Status</option>
+            <option value="date">Date</option>
+            <option value="price">Price / Amount</option>
+          </select>
+
+          <button
+            onClick={resetSearch}
+            style={{
+              padding: "12px 18px",
+              borderRadius: "10px",
+              border: "none",
+              background: "#ef4444",
+              color: "white",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            Reset
+          </button>
+        </div>
+
+        <div
+          style={{
+            background: "#020617",
+            padding: "15px",
+            borderRadius: "12px",
+            marginBottom: "15px",
+          }}
+        >
+          <strong>Results:</strong> {filteredData.length} from{" "}
+          <strong>{activeList}</strong>
+        </div>
+
+        {filteredData.length === 0 ? (
+          <div
+            style={{
+              padding: "25px",
+              background: "#111827",
+              borderRadius: "12px",
+              textAlign: "center",
+              color: "#cbd5e1",
+            }}
+          >
+            No results found.
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                background: "#020617",
+                borderRadius: "12px",
+                overflow: "hidden",
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#06b6d4" }}>
+                  {Object.keys(filteredData[0]).map((key) => (
+                    <th
+                      key={key}
+                      style={{
+                        padding: "12px",
+                        textAlign: "left",
+                        color: "white",
+                      }}
+                    >
+                      {key.toUpperCase()}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredData.map((item) => (
+                  <tr key={item.id} style={{ borderBottom: "1px solid #1e293b" }}>
+                    {Object.values(item).map((value, index) => (
+                      <td key={index} style={{ padding: "12px", color: "#e2e8f0" }}>
+                        {value}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
