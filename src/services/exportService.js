@@ -88,7 +88,7 @@ function exportCSV(res, data, filename = 'export.csv') {
             try {
                 res.end();
             } catch (_) {
-                // Response already ended
+                
             }
         });
 

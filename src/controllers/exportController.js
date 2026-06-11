@@ -10,7 +10,7 @@ async function exportResource(req, res) {
             return res.status(400).json({ error: 'Invalid format' });
         }
 
-        // 👉 TEST DATA (pa DB, pa error)
+        // TEST DATA (pa DB, pa error)
         let data = req.body.data || [
             { id: 1, name: "Test Booking", status: "active" },
             { id: 2, name: "Another Booking", status: "pending" }

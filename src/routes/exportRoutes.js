@@ -7,8 +7,7 @@ const exportController = require('../controllers/exportController');
 // Example: GET /api/export?resource=bookings&format=csv
 router.get('/export', exportController.exportResource);
 
-// POST route for exporting with filters in body
-// Body: { resource, format, filename, data }
+
 router.post('/export', express.json({ limit: '5mb' }), exportController.exportResource);
 
 module.exports = router;
